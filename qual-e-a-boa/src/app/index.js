@@ -1,31 +1,31 @@
-// ===================================================================
+// =====================================
 // index.js - Qual é a boa?
-// ===================================================================
+// =====================================
 
-// ETAPA 1 - TRAZER A FERRAMENTAS (import)
-import { useState, useEffect } from "react";
+// ETAPA INICIAL - TRAZER A FERRAMENTAS (import)
+import {useState, useEffect } from "react";
 // View -> uma caixa, serve para agrupar e organizar as coisas
 // Text -> Todo texto precisa estar dentro de um <text>
 // TextInput -> um campo para digitar
 // pressable -> qualquer coisa que dá pra tocar: nosso botão
 // StyleSheet -> ferramenta pra escrever os estilos.
-import {View, Text, TextInput, Pressable, ScrollView, styleSheet} from "react-native";
+import {View, Text, TextInput, Pressable, ScrollView, StyleSheet } from "react-native";
 import { cores } from "../data/tema"
-import { Accelerometer  } from "expo-sensors";
+import { Accelerometer } from "expo-sensors";
 import * as Haptics from "expo-haptics";
 
 const LIMITE_DE_FORCA = 1.8;
 const TEMPO_ENTRE_SORTEIOS = 1000; //milissegundos: 1000 = 1 segundo
 
-// ETAPA 01 - CRIAR A TELA
+// ETAPA 01 - CRIAR A TELA 
 
 export default function Home(){
     //começa com 3 opçoes para já ter o que sortear
-    const [opcoes, setOpcoes] = useState(["Pizza", "Hambúrger", "Sushi"]);
+    const [opcoes, setOpcoes] = useState(["Pizza", "Hambúrger", "Sushi"]);    
     // A opção que foi sorteada. Começa vazia ("")porque ainda não sorteou
     const [resultado, setResultado] = useState("");
     // O que a pessoa está digitando no campo. neste caso começa vazio.
-    const [textoDigitado, setTextoDigitado] = useState("");
+    const [textoDigitado, setTextoDigitado] = useState("")
 
     // FUNÇÃO SORTEAR
     function sortear(){
@@ -34,23 +34,23 @@ export default function Home(){
             return;
         }
 
-        // como sortear uma posição da lista:
+        // Como sortear uma posição da lista:
         // 1) Math.random() - número aleatórios entre 0 e 1
         // 2) x opcoes.length - multiplica pelo tamanho da lista
-        // 3) Math.floor() - arredona para Baixo
-        const posicao = Math.floor(Math.random()* opcoes.length);
+        // 3) Math.floor() - arredonda para Baixo
+        const posicao = Math.floor(Math.random() * opcoes.length);
 
         //opcoes[2] pega o item que está na posição 2 da lista
         const opcaoSorteada = opcoes[posicao];
         setResultado(opcaoSorteada) //aqui ele guarda no useState a tela atualizada!
 
         //aqui faz o celular vibrar avisando que saiu o resultado
-        Haptics.notificationsAsync(Haptics.NotificationFeedbackType.Success)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     }
 
-    // FUNÇÃO DE ADICIONAR UMA OPÇÃO
+    //FUNÇÃO DE ADCIONAR UMA OPÇÃO
     function adicionar(){
-        //trim retira os espaços do fim e do começo
+        //trim: retira os espaços do fim e do começo
         const nome = textoDigitado.trim();
 
         if (nome === "") {
@@ -60,27 +60,26 @@ export default function Home(){
         // Aqui criamos uma nova lista, com tudo o que já tinha + o nome novo
         const listaNova = [...opcoes, nome];
         setOpcoes(listaNova);
-        setTextoDigitado(""); // limpa o campo para digitar a póxima.
-
+        setTextoDigitado("");// limpa o campo para digitar a próxima.
     }
 
-    //FUNÇÃO DE REMOVER UMA OPÇÃO
+    // FUNÇÃO DE REMOVER UMA OPÇÃO
     function remover(nomeParaRemover){
-
+        
         const listaNova = opcoes.filter((opcao) => opcao !== nomeParaRemover);
         setOpcoes(listaNova);
     }
 
-    // SORTEAR AO CHACOALHAR
+    // SORTEAR AO CHACOALHAR 
     // Nós vamos usar aqui o useEffect, e o sensor
-    // userEffect = "faça isto DEPOIS que a tela aparecer"
-    // usamos para LIGAR o sensor, e para DESLIGAR quando a tela sair
-    useEffect(() => {
+    // useEffect = "faça isto DEPOIS que a tela aparecer"
+    // usamos para LIGAR o sensor, e para DELIGAR quando a tela sair
+    useEffect(() =>{
         //aqui pede ao sensor para medir a cada 100 milisegundos (10x por segundo)
-        Accelerometer.setUpdateInterval(100)
+        Accelerometer.setUpdateInterval(100);
 
-        // guarda a hora do ultimo sorteio, para não sortear 10 vezes
-        // começa com zero (nunca sorteou)
+        // Guarda a hora do ultimo sorteio, para não sortear 10 vezes
+        // Começa com zero (numca sorteou)
         // let (e não const) porque este valor vai mudar
         let horaDoUltimoSorteio = 0;
 
@@ -98,6 +97,7 @@ export default function Home(){
                 horaDoUltimoSorteio = agora;
                 sortear();
             }
+
         });
         // a função é devolvida aqui é a "LIMPEZA": roda quando a tela sai.
         // Desliga o sensor (como apagar a luz ao sair do quarto)
@@ -106,15 +106,24 @@ export default function Home(){
     }, [opcoes]);
 
     // PARA REALIZAÇÃO DO TESTE npx expo start, depois pressione "a"
+    // https://dontpad.com.br/senai-dsii2sesi
 
-    //AGORA VAMOS COMEÇAR A DESENHAR A TELA --> JSX
+    //AGORA VAMOS COMEÇAR A DESENHA A TELA --> JSX
     //
 
     return (
-        <ScrollView style={styleSheet.container} contentContainerStyle={style.conteudo}>
-            <Text style ={styles.titulo}>Qual é a Boa? 🎲</Text>
-            <Text style ={styles.subtitulo}>Monte a lista e chacoalhe o celular</Text>
+        <ScrollView style={styles.container} contentContainerStyle={styles.conteudo}>
+        <Text style={styles.titulo}>Qual é a boa? 🎲</Text>
+        <Text style={styles.subtitulo}>Monte a lista e chacoalhe o celular</Text>
+
         </ScrollView>
     );
-
 }
+
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: cores.fundo },
+    conteudo: { padding: 20, paddingTop: 60, paddingBottom: 40 },
+
+    titulo: { fontSize: 30, fontWeight: "bold", color: cores.textoPrincipal },
+    subtitulo: { fontSize: 15, color: cores.textoSecundario, marginTop: 4, marginBottom: 24 },
+});
